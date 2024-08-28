@@ -1,0 +1,180 @@
+openapi: "3.0.0"
+info:
+  title: Eventify Estonia API
+  description: API for managing events and processing user queries via Custom GPT.
+  version: "1.0.2"
+servers:
+  - url: https://your-repl-username.your-repl-name.repl.co
+    description: Replit server handling GPT requests and event processing.
+
+paths:
+  /webhook:
+    post:
+      summary: Handle initial user input
+      description: This endpoint receives the initial user input to determine whether the user wants to add an event or search for one.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                  description: Unique identifier for the user making the request.
+                initial_prompt:
+                  type: string
+                  description: The initial user input, asking if they want to add or search for events.
+      responses:
+        '200':
+          description: Successful determination of user intent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  action:
+                    type: string
+                    description: Indicates the determined action ('add_event' or 'search_event').
+                    example: "add_event"
+
+  /add-event:
+    post:
+      summary: Add a new event to the vector database
+      description: This endpoint is called when the user wants to add a new event. It stores the event data in the vector database and assigns the user as the event organizer.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                  description: Unique identifier for the user making the request.
+                event_data:
+                  type: object
+                  description: Data related to the event being added. Users can upload PDFs, provide links, or manually input text data.
+                  properties:
+                    event_name:
+                      type: string
+                      description: The name of the event.
+                    event_description:
+                      type: string
+                      description: Detailed description of the event.
+                    location:
+                      type: string
+                      description: Location where the event is held.
+                    date:
+                      type: string
+                      format: date-time
+                      description: Date and time of the event.
+                    age_group:
+                      type: string
+                      description: The target age group for the event.
+                    language:
+                      type: string
+                      description: The language in which the event will be conducted.
+                    format:
+                      type: string
+                      description: Format of the event (e.g., workshop, performance).
+                    uploaded_file:
+                      type: string
+                      format: binary
+                      description: Users can upload PDFs or other documents related to the event.
+                    external_links:
+                      type: array
+                      items:
+                        type: string
+                        description: Links to external sites with event details.
+                    manual_text:
+                      type: string
+                      description: Text input by the user describing the event.
+      responses:
+        '200':
+          description: Successful addition of the event to the database
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Event added successfully"
+                  event_id:
+                    type: string
+                    description: Unique identifier of the event in the database.
+        '400':
+          description: Bad request, typically due to missing or incorrect parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Bad request: missing required fields"
+
+  /search-event:
+    post:
+      summary: Search for events in the vector database
+      description: This endpoint is called when the user wants to search for events based on the given prompt.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                  description: Unique identifier for the user making the request.
+                search_prompt:
+                  type: string
+                  description: The search query or prompt provided by the user.
+      responses:
+        '200':
+          description: Successful search, returns matched events
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  matched_events:
+                    type: array
+                    description: List of events that match the user's search query.
+                    items:
+                      type: object
+                      properties:
+                        event_name:
+                          type: string
+                          description: Name of the matched event.
+                        event_description:
+                          type: string
+                          description: Description of the matched event.
+                        location:
+                          type: string
+                          description: Location of the matched event.
+                        date:
+                          type: string
+                          format: date-time
+                          description: Date and time of the matched event.
+                        age_group:
+                          type: string
+                          description: Target age group for the matched event.
+                        language:
+                          type: string
+                          description: Language of the matched event.
+                        format:
+                          type: string
+                          description: Format of the matched event.
+        '400':
+          description: Bad request, typically due to missing or incorrect parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Bad request: missing required fields"
