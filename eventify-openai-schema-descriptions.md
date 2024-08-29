@@ -1,49 +1,78 @@
-# OpenAPI Schema Descriptions
+# EventiZeya OpenAI Schema Descriptions
 
-## paths.post.description
-This endpoint processes the event's description text and generates structured outputs that emphasize the event's alignment with key psychological and neurobiological criteria relevant to personal growth, socialization, and mental health improvement. It stores the event data in the vector database for efficient retrieval.
+## /add-event-post
+Imagine you’re creating a post for Instagram. Think of all the key aspects of the event, the experience it offers, and the audience it targets. Now, create hashtags that capture these ideas. Separate them with commas, and ensure they encompass all possible dimensions of the event, from practical details to the emotional resonance it might evoke.
 
-## paths.post.requestBody.content.application_json.schema.properties.event_data.description
-Data related to the event being added. Users can upload PDFs, screenshots, provide links, or manually input text data. Process all input data together.
-
-## paths.post.requestBody.content.application_json.schema.properties.event_data.properties.name.description
+## /name
 The name of the event.
 
-## paths.post.requestBody.content.application_json.schema.properties.event_data.properties.desc_4_semantic.description
-The semantic description of the event. For detailed structuring guidelines, please refer to the external [documentation](https://github.com/eslinko/eventify-estonia/blob/main/semantic-description-guidelines.md).
-
-## paths.post.requestBody.content.application_json.schema.properties.event_data.properties.desc_4_euclidean.description
-The normalized description of the event for Euclidean search, focusing on practical details and structured for vector-based search algorithms.
-
-## paths.post.requestBody.content.application_json.schema.properties.event_data.properties.start_time.description
+## /start_time
 Start date and time of the event.
 
-## paths.post.requestBody.content.application_json.schema.properties.event_data.properties.end_time.description
+## /end_time
 End date and time of the event (optional).
 
-## paths.post.requestBody.content.application_json.schema.properties.event_data.properties.place.description
-Location where the event is held.
+## /place
+Details about the location where the event is held.
 
-## paths.post.requestBody.content.application_json.schema.properties.event_data.properties.place.properties.name.description
+### /place/name
 Name of the venue.
 
-## paths.post.requestBody.content.application_json.schema.properties.event_data.properties.place.properties.location.properties.city.description
+### /place/city
 City of the venue.
 
-## paths.post.requestBody.content.application_json.schema.properties.event_data.properties.place.properties.location.properties.country.description
+### /place/country
 Country of the venue.
 
-## paths.post.requestBody.content.application_json.schema.properties.event_data.properties.place.properties.location.properties.street.description
+### /place/street
 Street address of the venue.
 
-## paths.post.requestBody.content.application_json.schema.properties.event_data.properties.ticket_uri.description
-Link to the ticketing service.
+## /format
+The format of the event. The format can be one of the following, each tailored to different aspects of personal development, learning, healing, and mental health:
+- Masterclass: An intensive learning session led by an expert, focusing on hands-on practice and skill development. Ideal for participants seeking in-depth, practical experience and personal feedback in a focused setting.
+- Regular: Ongoing or recurring events designed for continuous skill development or mental health maintenance. These events help establish long-term habits and provide consistent support for personal growth.
+- Performance: A public presentation that emphasizes emotional impact and cultural enrichment. Performances often inspire, entertain, and can serve as a form of group therapy through artistic expression.
+- Exhibition: A display or demonstration of works, aimed at inspiring, educating, or fostering discussion. Exhibitions often include visual presentations and interactive elements to engage participants in learning and reflection.
+- Festival: A large-scale event that combines multiple activities, focusing on social interaction and cultural exchange. Festivals are ideal for broadening one’s cultural horizons and experiencing a variety of formats in a communal setting.
+- Dance: Physical activities centered around movement and emotional expression, promoting physical and mental well-being. Dance events enhance group interaction, relaxation, and mood elevation through various dance styles.
+- Sound Healing: Sessions that use sound vibrations for healing and meditation, focusing on both mental and physical recovery. Sound healing events often incorporate gongs, bowls, and nature sounds to facilitate deep relaxation and meditative states.
+- Sacred Ceremony: Spiritual practices that often involve rituals, focusing on deep emotional and spiritual experiences. Sacred ceremonies utilize sacred objects, collective rituals, and meditative practices to foster profound spiritual connections.
 
-## paths.post.requestBody.content.application_json.schema.properties.event_data.properties.external_links.description
-Links to external sites mentioned in the details.
+## /contact_info
+Information about how to contact the event organizer.
 
-## paths.post.responses.200.description
-Successful addition of the event to the database.
+### /contact_info/phone
+Phone number for contacting the organizer.
 
-## paths.post.responses.400.description
+### /contact_info/email
+Email address for contacting the organizer.
+
+### /contact_info/telegram
+Telegram handle for contacting the organizer.
+
+### /contact_info/deso_alias
+DeSo alias for contacting the organizer.
+
+## /crypto_wallet
+Information about the crypto wallet for payments.
+
+### /crypto_wallet/wallet_address
+The crypto wallet address for receiving payments.
+
+### /crypto_wallet/network
+The blockchain network on which the wallet is based (e.g., Ethereum, Binance Smart Chain).
+
+## /external_links
+Links to external sites that provide additional details about the event.
+
+## /event_added_success
+Event added successfully.
+
+## /event_id
+The unique identifier of the event in the database.
+
+## /bad_request
 Bad request, typically due to missing or incorrect parameters.
+
+## /bad_request_message
+Bad request: missing required fields.
