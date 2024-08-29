@@ -1,47 +1,24 @@
-openapi: "3.0.0"
+openapi: 3.1.0
 info:
   title: Eventify Estonia API
   description: API for managing events and processing user queries via Custom GPT.
-  version: "1.0.2"
+  version: 1.0.2
 servers:
-  - url: https://your-repl-username.your-repl-name.repl.co
+  - url: https://zeya888.me/eventify.php
     description: Replit server handling GPT requests and event processing.
 
-paths:
-  /webhook:
-    post:
-      summary: Handle initial user input
-      description: This endpoint receives the initial user input to determine whether the user wants to add an event or search for one.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                user_id:
-                  type: string
-                  description: Unique identifier for the user making the request.
-                initial_prompt:
-                  type: string
-                  description: The initial user input, asking if they want to add or search for events.
-      responses:
-        '200':
-          description: Successful determination of user intent
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  action:
-                    type: string
-                    description: Indicates the determined action ('add_event' or 'search_event').
-                    example: "add_event"
+x-github-project: https://github.com/eslinko/eventizeya
+$refs:
+  descriptions: $x-github-project + './eventify-openai-schema-descriptions.md'
+  semantic_guidelines: $x-github-project + './semantic-description-guidelines.md'
+  euclidean_guidelines: $x-github-project + './euclidean-description-guidelines.md'
 
+paths:
   /add-event:
     post:
+      operationId: addEvent
       summary: Add a new event to the vector database
-      description: This endpoint is called when the user wants to add a new event. It stores the event data in the vector database and assigns the user as the event organizer.
+      description: $refs['descriptions#/add-event-post']
       requestBody:
         required: true
         content:
@@ -49,50 +26,85 @@ paths:
             schema:
               type: object
               properties:
-                user_id:
+                name:
                   type: string
-                  description: Unique identifier for the user making the request.
-                event_data:
+                  description: $refs['descriptions#/name']
+                desc_4_semantic:
+                  type: string
+                  description: $refs['semantic_guidelines#/desc_4_semantic']
+                desc_4_euclidean:
+                  type: string
+                  description: $refs['euclidean_guidelines#/desc_4_euclidean']
+                start_time:
+                  type: string
+                  format: date-time
+                  description: $refs['descriptions#/start_time']
+                end_time:
+                  type: string
+                  format: date-time
+                  description: $refs['descriptions#/end_time']
+                place:
                   type: object
-                  description: Data related to the event being added. Users can upload PDFs, provide links, or manually input text data.
+                  description: $refs['descriptions#/place']
                   properties:
-                    event_name:
+                    name:
                       type: string
-                      description: The name of the event.
-                    event_description:
+                      description: $refs['descriptions#/place/name']
+                    city:
                       type: string
-                      description: Detailed description of the event.
-                    location:
+                      description: $refs['descriptions#/place/city']
+                    country:
                       type: string
-                      description: Location where the event is held.
-                    date:
+                      description: $refs['descriptions#/place/country']
+                    street:
                       type: string
-                      format: date-time
-                      description: Date and time of the event.
-                    age_group:
+                      description: $refs['descriptions#/place/street']
+                format:
+                  type: string
+                  enum:
+                    - Masterclass
+                    - Regular
+                    - Performance
+                    - Exhibition
+                    - Festival
+                    - Dance
+                    - Sound Healing
+                    - Sacred Ceremony
+                  description: $refs['descriptions#/format']
+                contact_info:
+                  type: object
+                  description: $refs['descriptions#/contact_info']
+                  properties:
+                    phone:
                       type: string
-                      description: The target age group for the event.
-                    language:
+                      description: $refs['descriptions#/contact_info/phone']
+                    email:
                       type: string
-                      description: The language in which the event will be conducted.
-                    format:
+                      description: $refs['descriptions#/contact_info/email']
+                    telegram:
                       type: string
-                      description: Format of the event (e.g., workshop, performance).
-                    uploaded_file:
+                      description: $refs['descriptions#/contact_info/telegram']
+                    deso_alias:
                       type: string
-                      format: binary
-                      description: Users can upload PDFs or other documents related to the event.
-                    external_links:
-                      type: array
-                      items:
-                        type: string
-                        description: Links to external sites with event details.
-                    manual_text:
+                      description: $refs['descriptions#/contact_info/deso_alias']
+                crypto_wallet:
+                  type: object
+                  description: $refs['descriptions#/crypto_wallet']
+                  properties:
+                    wallet_address:
                       type: string
-                      description: Text input by the user describing the event.
+                      description: $refs['descriptions#/crypto_wallet/wallet_address']
+                    network:
+                      type: string
+                      description: $refs['descriptions#/crypto_wallet/network']
+                external_links:
+                  type: array
+                  items:
+                    type: string
+                  description: $refs['descriptions#/external_links']
       responses:
-        '200':
-          description: Successful addition of the event to the database
+        "200":
+          description: $refs['descriptions#/event_added_success']
           content:
             application/json:
               schema:
@@ -100,12 +112,12 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Event added successfully"
+                    example: Event added successfully
                   event_id:
                     type: string
-                    description: Unique identifier of the event in the database.
-        '400':
-          description: Bad request, typically due to missing or incorrect parameters
+                    description: $refs['descriptions#/event_id']
+        "400":
+          description: $refs['descriptions#/bad_request']
           content:
             application/json:
               schema:
@@ -113,68 +125,4 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Bad request: missing required fields"
-
-  /search-event:
-    post:
-      summary: Search for events in the vector database
-      description: This endpoint is called when the user wants to search for events based on the given prompt.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                user_id:
-                  type: string
-                  description: Unique identifier for the user making the request.
-                search_prompt:
-                  type: string
-                  description: The search query or prompt provided by the user.
-      responses:
-        '200':
-          description: Successful search, returns matched events
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  matched_events:
-                    type: array
-                    description: List of events that match the user's search query.
-                    items:
-                      type: object
-                      properties:
-                        event_name:
-                          type: string
-                          description: Name of the matched event.
-                        event_description:
-                          type: string
-                          description: Description of the matched event.
-                        location:
-                          type: string
-                          description: Location of the matched event.
-                        date:
-                          type: string
-                          format: date-time
-                          description: Date and time of the matched event.
-                        age_group:
-                          type: string
-                          description: Target age group for the matched event.
-                        language:
-                          type: string
-                          description: Language of the matched event.
-                        format:
-                          type: string
-                          description: Format of the matched event.
-        '400':
-          description: Bad request, typically due to missing or incorrect parameters
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Bad request: missing required fields"
+                    example: $refs['descriptions#/bad_request_message']
