@@ -1,0 +1,70 @@
+// Добавьте этот код в HTML-виджет на странице с формой Elementor
+
+// HelloSign API Key
+const HELLOSIGN_API_KEY = '3c3aa8fa5dcca9a0450c271335ae4ae001909a998424a785bf9ada4c7bdb021c';
+
+// Template ID (замените на актуальный ID вашего шаблона)
+const TEMPLATE_ID = 'YOUR_TEMPLATE_ID_HERE';
+
+// Функция для отправки данных в HelloSign
+async function sendToHelloSign(formData) {
+    const url = 'https://api.hellosign.com/v3/signature_request/send_with_template';
+    
+    const signers = [{
+        email_address: formData.email,
+        name: formData.name,
+        role: 'Signer'
+    }];
+
+    const customFields = [{
+        name: 'Address',
+        value: formData.address
+    }];
+
+    const data = {
+        template_id: TEMPLATE_ID,
+        subject: 'Document for signature',
+        message: 'Please sign this document',
+        signers: signers,
+        custom_fields: customFields
+    };
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Basic ${btoa(HELLOSIGN_API_KEY + ':')}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const result = await response.json();
+        console.log('HelloSign response:', result);
+        alert('Document sent for signing successfully!');
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while sending the document for signing.');
+    }
+}
+
+// Обработчик отправки формы
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');  // Предполагается, что на странице только одна форма
+    
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();  // Предотвращаем стандартную отправку формы
+
+        const formData = {
+            name: document.getElementById('name').value,
+            address: document.getElementById('address').value,
+            email: document.getElementById('email').value
+        };
+
+        sendToHelloSign(formData);
+    });
+});
